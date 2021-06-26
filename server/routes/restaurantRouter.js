@@ -24,11 +24,7 @@ restaurantRouter.get('/', async (req, res) => {
 // Get a restaurant
 restaurantRouter.get('/:restaurantId', async (req, res) => {
   try {
-    // const results = await db.query(
-    //   `select * from restaurants where id = ${req.params.restaurantId}`
-    // ); as that can lead to sql injections
-
-    // use paramaterized query over string concatinations
+    // use paramaterized query over string concatinations to prevent sql injections
     const results = await db.query('select * from restaurants where id = $1', [
       req.params.restaurantId,
     ]);
@@ -46,8 +42,22 @@ restaurantRouter.get('/:restaurantId', async (req, res) => {
 });
 
 // create a restaurant
-restaurantRouter.post('/', (req, res) => {
-  res.send(req.body);
+restaurantRouter.post('/', async (req, res) => {
+  console.log(req.body);
+  try {
+    const results = await db.query(
+      'INSERT INTO restaurants (name, location, price_range) values ($1, $2, $3) returning *',
+      [req.body.name, req.body.location, req.body.price_range]
+    ); // notice we put returning * to return the new row added.
+    res.status(201).json({
+      status: 'success',
+      data: {
+        restaurants: results.rows,
+      },
+    });
+  } catch (e) {
+    console.log(e.message);
+  }
 });
 
 // update a restaurant

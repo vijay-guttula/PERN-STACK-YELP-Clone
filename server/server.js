@@ -6,6 +6,11 @@ const restaurantRouter = require('./routes/restaurantRouter');
 
 const app = express();
 
+// bodyparser
+// const bodyParser = require('body-parser');
+// app.use(bodyParser.json());
+app.use(express.json());
+
 // morgan middleware
 const morgan = require('morgan');
 app.use(morgan('dev'));
