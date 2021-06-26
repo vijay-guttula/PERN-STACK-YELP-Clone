@@ -84,8 +84,17 @@ restaurantRouter.put('/:restaurantId', async (req, res) => {
 });
 
 // delete a restaurant
-restaurantRouter.delete('/:restaurantId', (req, res) => {
-  res.send(req.params);
+restaurantRouter.delete('/:restaurantId', async (req, res) => {
+  try {
+    const results = await db.query('DELETE from restaurants where id = $1', [
+      req.params.restaurantId,
+    ]);
+    res.status(204).json({
+      status: 'success',
+    });
+  } catch (e) {
+    console.log(e.message);
+  }
 });
 
 module.exports = restaurantRouter;
