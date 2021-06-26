@@ -61,8 +61,26 @@ restaurantRouter.post('/', async (req, res) => {
 });
 
 // update a restaurant
-restaurantRouter.put('/:restaurantId', (req, res) => {
-  res.send(req.params);
+restaurantRouter.put('/:restaurantId', async (req, res) => {
+  try {
+    const results = await db.query(
+      'UPDATE restaurants SET name=$1, location=$2, price_range=$3 where id =$4 returning *',
+      [
+        req.body.name,
+        req.body.location,
+        req.body.price_range,
+        req.params.restaurantId,
+      ]
+    );
+    res.status(200).json({
+      status: 'success',
+      data: {
+        restaurants: results.rows,
+      },
+    });
+  } catch (e) {
+    console.log(e.message);
+  }
 });
 
 // delete a restaurant
