@@ -22,8 +22,27 @@ restaurantRouter.get('/', async (req, res) => {
 });
 
 // Get a restaurant
-restaurantRouter.get('/:restaurantId', (req, res) => {
-  res.send(req.params);
+restaurantRouter.get('/:restaurantId', async (req, res) => {
+  try {
+    // const results = await db.query(
+    //   `select * from restaurants where id = ${req.params.restaurantId}`
+    // ); as that can lead to sql injections
+
+    // use paramaterized query over string concatinations
+    const results = await db.query('select * from restaurants where id = $1', [
+      req.params.restaurantId,
+    ]);
+
+    res.status(200).json({
+      status: 'success',
+      results: results.rows.length,
+      data: {
+        restaurants: results.rows,
+      },
+    });
+  } catch (e) {
+    console.log(e.message);
+  }
 });
 
 // create a restaurant
