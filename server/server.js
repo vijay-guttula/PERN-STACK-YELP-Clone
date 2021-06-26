@@ -1,11 +1,13 @@
 require('dotenv').config();
 
 const express = require('express');
-const app = express();
-const morgan = require('morgan');
+const db = require('./db');
 const restaurantRouter = require('./routes/restaurantRouter');
 
+const app = express();
+
 // morgan middleware
+const morgan = require('morgan');
 app.use(morgan('dev'));
 
 // linking routes

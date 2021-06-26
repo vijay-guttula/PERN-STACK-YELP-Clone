@@ -1,16 +1,14 @@
 const express = require('express');
 const restaurantRouter = express.Router();
+const db = require('../db');
 
 restaurantRouter.use(express.json());
 
 // GET all restaurants
-restaurantRouter.get('/', (req, res) => {
-  res.status(200).json({
-    status: 'success',
-    data: {
-      restaurant: ['A', 'B'],
-    },
-  });
+restaurantRouter.get('/', async (req, res) => {
+  const results = await db.query('select * from restaurants');
+  console.log(results);
+  res.send();
 });
 
 // Get a restaurant
