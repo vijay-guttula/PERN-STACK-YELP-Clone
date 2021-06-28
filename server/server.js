@@ -2,12 +2,14 @@ require('dotenv').config();
 
 const express = require('express');
 const db = require('./db');
+const cors = require('cors');
 const restaurantRouter = require('./routes/restaurantRouter');
 
 const app = express();
 
-// bodyparser
-// const bodyParser = require('body-parser');
+// CORS
+app.use(cors());
+
 // app.use(bodyParser.json());
 app.use(express.json());
 
