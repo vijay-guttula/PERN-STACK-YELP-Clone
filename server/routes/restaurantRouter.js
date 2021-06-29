@@ -2,8 +2,6 @@ const express = require('express');
 const restaurantRouter = express.Router();
 const db = require('../db');
 
-restaurantRouter.use(express.json());
-
 // GET all restaurants
 restaurantRouter.get('/', async (req, res) => {
   try {
@@ -16,7 +14,7 @@ restaurantRouter.get('/', async (req, res) => {
       },
     });
   } catch (e) {
-    console.log(e.message);
+    console.log(e);
   }
 });
 
@@ -30,13 +28,12 @@ restaurantRouter.get('/:restaurantId', async (req, res) => {
 
     res.status(200).json({
       status: 'success',
-      results: results.rows.length,
       data: {
-        restaurants: results.rows,
+        restaurant: results.rows[0],
       },
     });
   } catch (e) {
-    console.log(e.message);
+    console.log(e);
   }
 });
 
@@ -47,11 +44,11 @@ restaurantRouter.post('/', async (req, res) => {
     const results = await db.query(
       'INSERT INTO restaurants (name, location, price_range) values ($1, $2, $3) returning *',
       [req.body.name, req.body.location, req.body.price_range]
-    ); // notice we put returning * to return the new row added.
+    );
     res.status(201).json({
       status: 'success',
       data: {
-        restaurants: results.rows,
+        restaurant: results.rows[0],
       },
     });
   } catch (e) {
@@ -74,7 +71,7 @@ restaurantRouter.put('/:restaurantId', async (req, res) => {
     res.status(200).json({
       status: 'success',
       data: {
-        restaurants: results.rows,
+        restaurant: results.rows[0],
       },
     });
   } catch (e) {
