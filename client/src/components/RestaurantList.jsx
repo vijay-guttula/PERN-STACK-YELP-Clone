@@ -19,7 +19,18 @@ const RestaurantList = (props) => {
     fetchData();
   }, []);
 
-  const handleDelete = (e) => {};
+  const handleDelete = async (id) => {
+    try {
+      const response = RestaurantFinder.delete(`/${id}`);
+      setRestaurants(
+        restaurants.filter((restaurant) => {
+          return restaurant.id !== id;
+        })
+      );
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
     <div>
@@ -48,7 +59,10 @@ const RestaurantList = (props) => {
                     <button className='btn btn-warning'>Update</button>
                   </td>
                   <td>
-                    <button onClick={handleDelete} className='btn btn-danger'>
+                    <button
+                      onClick={() => handleDelete(restaurant.id)}
+                      className='btn btn-danger'
+                    >
                       Delete
                     </button>
                   </td>
