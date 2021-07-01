@@ -37,7 +37,6 @@ const UpdateRestaurant = () => {
 
   return (
     <div>
-      <h1 className='text-center'>Update restaurant</h1>
       <form action=''>
         <div className='form-group'>
           <label htmlFor='name'>Name</label>

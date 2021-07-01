@@ -1,7 +1,12 @@
 import React from 'react';
+import RestaurantDetail from '../components/RestaurantDetail';
 
 const RestaurantDetailPage = () => {
-  return <div>Restaurant Detail page</div>;
+  return (
+    <div>
+      <RestaurantDetail />
+    </div>
+  );
 };
 
 export default RestaurantDetailPage;
