@@ -2,6 +2,7 @@ import React, { useContext, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import RestaurantFinder from '../apis/RestaurantFinder';
 import { RestaurantsContext } from '../context/RestaurantsContext';
+import StarRating from './StarRating';
 
 const RestaurantDetail = () => {
   const { id } = useParams();
@@ -22,7 +23,12 @@ const RestaurantDetail = () => {
     fetchData();
   }, []);
 
-  return <div>{selectedRestaurant && selectedRestaurant.name}</div>;
+  return (
+    <div>
+      <h1>{selectedRestaurant && selectedRestaurant.name}</h1>
+      <StarRating rating={2.1} />
+    </div>
+  );
 };
 
 export default RestaurantDetail;
