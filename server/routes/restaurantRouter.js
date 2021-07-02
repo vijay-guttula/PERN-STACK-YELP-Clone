@@ -4,32 +4,16 @@ const db = require('../db');
 
 // GET all restaurants
 restaurantRouter.get('/', async (req, res) => {
-  let reviewDetails = [];
   try {
-    const restaurants = await db.query('select * from restaurants');
+    const restaurantsAndRating = await db.query(
+      'SELECT * from restaurants left join (select restaurant_id, count(*), TRUNC(AVG(rating),1) as average_rating from reviews group by restaurant_id) reviews on restaurants.id = reviews.restaurant_id;'
+    );
     // console.log(restaurants);
-    for (let i = 0; i < restaurants.rows.length; i++) {
-      const reviewCount = await db.query(
-        `Select count(*) from reviews where restaurant_id = ${restaurants.rows[i].id}`
-      );
-      const avgRating = await db.query(
-        `SELECT AVG(rating)::numeric(10,2) from reviews where restaurant_id = ${restaurants.rows[i].id}`
-      );
-      // console.log(reviewCount);
-      reviewDetails.push({
-        restaurant_id: restaurants.rows[i].id,
-        data: {
-          reviewCount,
-          avgRating,
-        },
-      });
-    }
     res.status(200).json({
       status: 'success',
-      results: restaurants.rows.length,
+      results: restaurantsAndRating.rows.length,
       data: {
-        restaurants: restaurants.rows,
-        reviewDetails,
+        restaurants: restaurantsAndRating.rows,
       },
     });
   } catch (e) {
@@ -42,9 +26,10 @@ restaurantRouter.get('/:restaurantId', async (req, res) => {
   try {
     // use paramaterized query over string concatinations to prevent sql injections
     const restaurant = await db.query(
-      'select * from restaurants where id = $1',
+      'SELECT * from restaurants left join (select restaurant_id, COUNT(*),AVG(rating)::numeric(10,2) as average_rating from reviews group by restaurant_id) reviews on restaurants.id = reviews.restaurant_id where id = $1',
       [req.params.restaurantId]
     );
+    console.log(restaurant);
 
     const reviews = await db.query(
       'select * from reviews where restaurant_id = $1',

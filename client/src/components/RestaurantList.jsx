@@ -5,8 +5,7 @@ import { RestaurantsContext } from '../context/RestaurantsContext';
 import StarRating from './StarRating';
 
 const RestaurantList = (props) => {
-  const { restaurants, setRestaurants, reviews, setReviews } =
-    useContext(RestaurantsContext);
+  const { restaurants, setRestaurants } = useContext(RestaurantsContext);
 
   let history = useHistory();
 
@@ -14,12 +13,9 @@ const RestaurantList = (props) => {
     const fetchData = async () => {
       try {
         const response = await RestaurantFinder.get('/');
-        console.log(response.data.data.reviewDetails);
-        console.log(
-          response.data.data.reviewDetails[0].data.avgRating.rows[0].avg
-        );
+        // console.log(response.data.data.restaurants);
+        // console.log(response.data.data);
         setRestaurants(response.data.data.restaurants);
-        setReviews(response.data.data.reviewDetails);
       } catch (e) {
         console.log(e.message);
       }
@@ -51,6 +47,22 @@ const RestaurantList = (props) => {
     history.push(`/restaurants/${id}`);
   };
 
+  const renderRating = (restaurant) => {
+    if (!restaurant.count) {
+      return (
+        <>
+          <span className='text-warning'>0 Reviews</span>
+        </>
+      );
+    }
+    return (
+      <>
+        <StarRating rating={restaurant.average_rating} />
+        <span className='text-warning ml-1'>({restaurant.count})</span>
+      </>
+    );
+  };
+
   return (
     <div>
       <table className='table table-info table-hover'>
@@ -67,7 +79,7 @@ const RestaurantList = (props) => {
         <tbody>
           {restaurants &&
             restaurants.map((restaurant) => {
-              console.log(reviews);
+              // console.log(restaurant);
               return (
                 <tr
                   key={restaurant.id}
@@ -76,13 +88,7 @@ const RestaurantList = (props) => {
                   <td>{restaurant.name}</td>
                   <td>{restaurant.location}</td>
                   <td>{'$'.repeat(restaurant.price_range)}</td>
-                  <td>
-                    <span>
-                      <StarRating
-                        rating={reviews[0].data.avgRating.rows[0].avg}
-                      />
-                    </span>
-                  </td>
+                  <td>{renderRating(restaurant)}</td>
                   <td>
                     <button
                       onClick={(e) => handleUpdate(e, restaurant.id)}
