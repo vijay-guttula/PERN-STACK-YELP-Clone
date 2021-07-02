@@ -22,14 +22,21 @@ restaurantRouter.get('/', async (req, res) => {
 restaurantRouter.get('/:restaurantId', async (req, res) => {
   try {
     // use paramaterized query over string concatinations to prevent sql injections
-    const results = await db.query('select * from restaurants where id = $1', [
-      req.params.restaurantId,
-    ]);
+    const restaurant = await db.query(
+      'select * from restaurants where id = $1',
+      [req.params.restaurantId]
+    );
+
+    const reviews = await db.query(
+      'select * from reviews where restaurant_id = $1',
+      [req.params.restaurantId]
+    );
 
     res.status(200).json({
       status: 'success',
       data: {
-        restaurant: results.rows[0],
+        restaurant: restaurant.rows[0],
+        reviews: reviews.rows,
       },
     });
   } catch (e) {
