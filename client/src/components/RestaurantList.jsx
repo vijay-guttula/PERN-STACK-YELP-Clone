@@ -1,18 +1,25 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import RestaurantFinder from '../apis/RestaurantFinder';
 import { RestaurantsContext } from '../context/RestaurantsContext';
+import StarRating from './StarRating';
 
 const RestaurantList = (props) => {
-  const { restaurants, setRestaurants } = useContext(RestaurantsContext);
+  const { restaurants, setRestaurants, reviews, setReviews } =
+    useContext(RestaurantsContext);
+
   let history = useHistory();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await RestaurantFinder.get('/');
-        console.log(response);
+        console.log(response.data.data.reviewDetails);
+        console.log(
+          response.data.data.reviewDetails[0].data.avgRating.rows[0].avg
+        );
         setRestaurants(response.data.data.restaurants);
+        setReviews(response.data.data.reviewDetails);
       } catch (e) {
         console.log(e.message);
       }
@@ -60,7 +67,7 @@ const RestaurantList = (props) => {
         <tbody>
           {restaurants &&
             restaurants.map((restaurant) => {
-              console.log(restaurant);
+              console.log(reviews);
               return (
                 <tr
                   key={restaurant.id}
@@ -69,7 +76,13 @@ const RestaurantList = (props) => {
                   <td>{restaurant.name}</td>
                   <td>{restaurant.location}</td>
                   <td>{'$'.repeat(restaurant.price_range)}</td>
-                  <td>reviews</td>
+                  <td>
+                    <span>
+                      <StarRating
+                        rating={reviews[0].data.avgRating.rows[0].avg}
+                      />
+                    </span>
+                  </td>
                   <td>
                     <button
                       onClick={(e) => handleUpdate(e, restaurant.id)}

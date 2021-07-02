@@ -6,7 +6,7 @@ const Reviews = ({ reviews }) => {
     <div className='row row-cols-3 mb-2'>
       {reviews &&
         reviews.map((review) => {
-          console.log(review);
+          // console.log(review);
           return (
             <div
               key={review.id}

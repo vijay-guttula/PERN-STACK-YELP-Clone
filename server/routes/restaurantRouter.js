@@ -4,13 +4,32 @@ const db = require('../db');
 
 // GET all restaurants
 restaurantRouter.get('/', async (req, res) => {
+  let reviewDetails = [];
   try {
-    const results = await db.query('select * from restaurants');
+    const restaurants = await db.query('select * from restaurants');
+    // console.log(restaurants);
+    for (let i = 0; i < restaurants.rows.length; i++) {
+      const reviewCount = await db.query(
+        `Select count(*) from reviews where restaurant_id = ${restaurants.rows[i].id}`
+      );
+      const avgRating = await db.query(
+        `SELECT AVG(rating)::numeric(10,2) from reviews where restaurant_id = ${restaurants.rows[i].id}`
+      );
+      // console.log(reviewCount);
+      reviewDetails.push({
+        restaurant_id: restaurants.rows[i].id,
+        data: {
+          reviewCount,
+          avgRating,
+        },
+      });
+    }
     res.status(200).json({
       status: 'success',
-      results: results.rows.length,
+      results: restaurants.rows.length,
       data: {
-        restaurants: results.rows,
+        restaurants: restaurants.rows,
+        reviewDetails,
       },
     });
   } catch (e) {
