@@ -1,5 +1,8 @@
 import axios from 'axios';
 
 export default axios.create({
-  baseURL: 'https://pernstack-yelpclone.herokuapp.com',
+  baseURL:
+    process.env.NODE_ENV !== 'production'
+      ? 'http://localhost:3000/api/v1/restaurants'
+      : '',
 });
